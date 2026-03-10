@@ -15,19 +15,20 @@ const ReviewSection = ({ farmerId }) => {
   const [loading, setLoading] = useState(false);
 
   // 1. Fetch Reviews
-// 1. Sahi API call (bina '/farmer' ke)
 const fetchReviews = async () => {
-  try {
-    // Sahi URL jo aapke backend route se match karta hai
-    const { data } = await axios.get(`${API_URL}/reviews/${farmerId}`);
-    
-    // Check karein ki backend direct array bhej raha hai ya success object
-    // Agar backend 'res.json(reviews)' bhejta hai toh sirf 'data' use karein
-    setReviews(data.data || data); 
-  } catch (err) {
-    console.error("Error fetching reviews", err);
-  }
-};
+    try {
+      // '/farmer/' ko hata kar direct ID bhejni hai
+      const { data } = await axios.get(`${API_URL}/reviews/${farmerId}`);
+      
+      // Console mein check karne ke liye (Optional)
+      console.log("Reviews Data:", data);
+
+      // Agar backend success envelope bhej raha hai toh data.data, warna sirf data
+      setReviews(data.data || data); 
+    } catch (err) {
+      console.error("Error fetching reviews", err);
+    }
+  };
 
   const fetchSummary = async () => {
     try {

@@ -15,14 +15,18 @@ const ReviewSection = ({ farmerId }) => {
   const [loading, setLoading] = useState(false);
 
   // 1. Fetch Reviews
-  const fetchReviews = async () => {
-    try {
-      const { data } = await axios.get(`${API_URL}/reviews/${farmerId}`);
-      setReviews(data.data);
-    } catch (err) {
-      console.error("Error fetching reviews");
-    }
-  };
+  // ReviewSection.jsx mein fetchReviews function change kijiye:
+const fetchReviews = async () => {
+  try {
+    // Agar aapka backend route /api/reviews/farmer/:id hai toh ye likhein:
+    const { data } = await axios.get(`${API_URL}/reviews/farmer/${farmerId}`);
+    
+    // Agar data.data nahi chal raha, toh sirf data set karke dekhein
+    setReviews(data.data || data); 
+  } catch (err) {
+    console.error("Error fetching reviews", err);
+  }
+};
 
   const fetchSummary = async () => {
     try {

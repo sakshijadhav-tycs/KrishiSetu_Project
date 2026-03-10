@@ -33,20 +33,28 @@ const AddProductPage = () => {
   const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setCategoriesLoading(true);
-        const { data } = await axios.get(`${API_URL}/categories`);
-        if (data.success) setCategories(data.data);
-      } catch (err) {
-        toast.error("Could not load categories.");
-      } finally {
-        setCategoriesLoading(false);
+  // AddProductPage.jsx mein pehle useEffect ko aise update karein:
+useEffect(() => {
+  // Purane errors clear karein taaki loading state reset ho sake
+  dispatch(clearProductError());
+  dispatch(resetProductSuccess());
+
+  const fetchCategories = async () => {
+    try {
+      setCategoriesLoading(true);
+      const { data } = await axios.get(`${API_URL}/categories`);
+      if (data.success) {
+        setCategories(data.data);
       }
-    };
-    fetchCategories();
-  }, []);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+      toast.error("Could not load categories.");
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+  fetchCategories();
+}, [dispatch]); // dispatch add karein dependency mein
 
   useEffect(() => {
     if (success) {

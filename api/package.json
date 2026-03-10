@@ -1,0 +1,44 @@
+{
+  "name": "KrishiSetu-api",
+  "version": "1.0.0",
+  "description": "API for KrishiSetu - connecting local farmers with consumers",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "node --test tests/**/*.test.js",
+    "migrate:images": "node scripts/migrateLocalImagesToCloudinary.js",
+    "migrate:images:dry": "node scripts/migrateLocalImagesToCloudinary.js --dry-run"
+  },
+  "keywords": [
+    "farmers",
+    "local",
+    "produce",
+    "marketplace",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.14.2",
+    "multer": "^1.4.5-lts.2",
+    "multer-storage-cloudinary": "^4.0.0",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.12",
+    "pdfkit": "^0.17.2",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

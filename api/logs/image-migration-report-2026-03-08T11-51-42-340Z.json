@@ -1,0 +1,275 @@
+{
+  "startedAt": "2026-03-08T11:51:42.340Z",
+  "dryRun": true,
+  "uploadsRoot": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads",
+  "summary": {
+    "scanned": 24,
+    "migrated": 0,
+    "skipped": 24,
+    "missingFiles": 0,
+    "errors": 0
+  },
+  "collections": {
+    "products": {
+      "scanned": 18,
+      "migrated": 0,
+      "skipped": 18,
+      "missingFiles": 0,
+      "errors": 0
+    },
+    "users": {
+      "scanned": 6,
+      "migrated": 0,
+      "skipped": 6,
+      "missingFiles": 0,
+      "errors": 0
+    },
+    "complaints": {
+      "scanned": 0,
+      "migrated": 0,
+      "skipped": 0,
+      "missingFiles": 0,
+      "errors": 0
+    }
+  },
+  "entries": [
+    {
+      "timestamp": "2026-03-08T11:51:42.388Z",
+      "collection": "products",
+      "documentId": "695eb627b29f53f96fd06fa6",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1767814695442-630631425.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1767814695442-630631425.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.388Z",
+      "collection": "products",
+      "documentId": "69611fe89e3b3c0047462701",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1767972840469-649861467.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1767972840469-649861467.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "696123333cd45ca3e958731f",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1767973682989-977570084.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1767973682989-977570084.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "69636b1bc71dd4bfc466cfdc",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768123163370-201683773.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768123163370-201683773.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "69636be7c71dd4bfc466cfe7",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768123367280-485434074.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768123367280-485434074.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "69636d54c71dd4bfc466cff2",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768123732226-574449284.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768123732226-574449284.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "69636eccc71dd4bfc466cffd",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768124108872-458452773.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768124108872-458452773.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.389Z",
+      "collection": "products",
+      "documentId": "6963703bc71dd4bfc466d008",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768124475732-158702828.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768124475732-158702828.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.390Z",
+      "collection": "products",
+      "documentId": "69637165c71dd4bfc466d013",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768124773074-563635564.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768124773074-563635564.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.390Z",
+      "collection": "products",
+      "documentId": "69637598c71dd4bfc466d060",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768125848175-125774216.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768125848175-125774216.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "6963761dc71dd4bfc466d06b",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768125981854-682408824.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768125981854-682408824.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "6963783dc71dd4bfc466d077",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1768126525041-152573784.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1768126525041-152573784.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "698c845463713f82c4d9b6b8",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1770816596860-521382094.jpeg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1770816596860-521382094.jpeg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "6994837628e6c874df87c86a",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1771340662049-395366311.webp",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1771340662049-395366311.webp",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "6994844428e6c874df87c875",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1771340868083-450862021.webp",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1771340868083-450862021.webp",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.391Z",
+      "collection": "products",
+      "documentId": "69ad5b53d2f4257c4bd18f0a",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1772968787493-Watermelon.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1772968787493-Watermelon.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.392Z",
+      "collection": "products",
+      "documentId": "69ad5e82dce5cb8c055d8a84",
+      "fieldPath": "images.0",
+      "status": "dry_run",
+      "originalValue": "uploads/1772969602283-Green-Grapes.jpg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1772969602283-Green-Grapes.jpg",
+      "cloudinaryFolder": "krishisetu/products"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.392Z",
+      "collection": "products",
+      "documentId": "69ad60bee804d1699a2724e9",
+      "fieldPath": "images.0",
+      "status": "skipped",
+      "reason": "already_remote",
+      "originalValue": "https://res.cloudinary.com/dvelz1nls/image/upload/v1772970174/krishisetu/products/1772970171697-Pomegranate.webp"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.400Z",
+      "collection": "users",
+      "documentId": "695eb58cb29f53f96fd06f95",
+      "fieldPath": "profileImage",
+      "status": "dry_run",
+      "originalValue": "uploads/1771736602064-WhatsApp Image 2026-02-22 at 10.30.30.jpeg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1771736602064-WhatsApp Image 2026-02-22 at 10.30.30.jpeg",
+      "cloudinaryFolder": "krishisetu/profiles"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.400Z",
+      "collection": "users",
+      "documentId": "695eb58cb29f53f96fd06f95",
+      "fieldPath": "kyc.documentImage",
+      "status": "dry_run",
+      "originalValue": "uploads/1772818632850-Aadhar card(sakshi).jpeg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1772818632850-Aadhar card(sakshi).jpeg",
+      "cloudinaryFolder": "krishisetu/kyc"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.401Z",
+      "collection": "users",
+      "documentId": "6963729dc71dd4bfc466d044",
+      "fieldPath": "profileImage",
+      "status": "dry_run",
+      "originalValue": "uploads/1771736674476-WhatsApp Image 2026-02-22 at 10.32.25.jpeg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1771736674476-WhatsApp Image 2026-02-22 at 10.32.25.jpeg",
+      "cloudinaryFolder": "krishisetu/profiles"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.401Z",
+      "collection": "users",
+      "documentId": "6963729dc71dd4bfc466d044",
+      "fieldPath": "kyc.documentImage",
+      "status": "skipped",
+      "reason": "empty_value",
+      "originalValue": ""
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.401Z",
+      "collection": "users",
+      "documentId": "6995e46a6e04338c8cce3f71",
+      "fieldPath": "profileImage",
+      "status": "dry_run",
+      "originalValue": "uploads/1771737683976-WhatsApp Image 2026-02-22 at 10.51.01.jpeg",
+      "localFilePath": "C:\\Users\\Sakshi\\OneDrive\\Desktop\\TY_Project_Working\\KrishiSetu_Project\\KrishiSetu\\api\\uploads\\1771737683976-WhatsApp Image 2026-02-22 at 10.51.01.jpeg",
+      "cloudinaryFolder": "krishisetu/profiles"
+    },
+    {
+      "timestamp": "2026-03-08T11:51:42.401Z",
+      "collection": "users",
+      "documentId": "6995e46a6e04338c8cce3f71",
+      "fieldPath": "kyc.documentImage",
+      "status": "skipped",
+      "reason": "empty_value",
+      "originalValue": ""
+    }
+  ],
+  "finishedAt": "2026-03-08T11:51:42.403Z"
+}

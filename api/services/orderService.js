@@ -1,9 +1,9 @@
 import Order from "../models/OrderModel.js";
 import Product from "../models/ProductModel.js";
 import User from "../models/UserModel.js";
-import Razorpay from "razorpay";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import { requireRazorpayInstance } from "../config/razorpay.js";
 import {
   sendEmail,
   sendOrderConfirmation,
@@ -40,11 +40,6 @@ const getUniqueFarmerIds = (items = []) =>
   )];
 
 dotenv.config();
-
-const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
 
 const ORDER_STATUS_FLOW = {
   pending: ["accepted", "rejected"],
@@ -161,12 +156,22 @@ export const createOrder = async (req, res) => {
 
     let razorpayOrderId = null;
     if (paymentMethod === "razorpay") {
+      let razorpay;
+      try {
+        razorpay = requireRazorpayInstance();
+      } catch (error) {
+        if (error?.code === "RAZORPAY_NOT_CONFIGURED") {
+          return res.status(503).json({ success: false, message: error.message });
+        }
+        throw error;
+      }
+
       const options = {
         amount: Math.round(totalAmount * 100), 
         currency: "INR",
         receipt: `receipt_${Date.now()}`,
       };
-      const rzpOrder = await razorpayInstance.orders.create(options);
+      const rzpOrder = await razorpay.orders.create(options);
       razorpayOrderId = rzpOrder.id;
     }
 
@@ -370,7 +375,17 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid Signature" });
     }
 
-    const paymentInfo = await razorpayInstance.payments.fetch(razorpay_payment_id);
+    let razorpay;
+    try {
+      razorpay = requireRazorpayInstance();
+    } catch (error) {
+      if (error?.code === "RAZORPAY_NOT_CONFIGURED") {
+        return res.status(503).json({ success: false, message: error.message });
+      }
+      throw error;
+    }
+
+    const paymentInfo = await razorpay.payments.fetch(razorpay_payment_id);
 
     const updatedOrder = await Order.findById(dbOrderId)
       .populate("consumer", "name email")
@@ -817,7 +832,7 @@ export const cancelOrderByFarmer = async (req, res) => {
         responseMeta.refundStatus = "failed";
       } else {
         try {
-          const refundResult = await razorpayInstance.payments.refund(paymentId, {
+          const refundResult = await requireRazorpayInstance().payments.refund(paymentId, {
             amount: Math.round(refundAmount * 100),
             notes: {
               orderId: String(order._id),

@@ -1,7 +1,7 @@
 import Order from '../models/OrderModel.js';
 import Product from '../models/ProductModel.js';
 import User from '../models/UserModel.js';
-import { razorpayInstance } from '../config/razorpay.js';
+import { requireRazorpayInstance } from '../config/razorpay.js';
 import {
   fetchRazorpayPayment,
   verifyRazorpaySignature,
@@ -97,7 +97,8 @@ export const createRazorpayOrder = async (req, res) => {
       }
     };
 
-    const razorpayOrder = await razorpayInstance.orders.create(options);
+    const razorpay = requireRazorpayInstance();
+    const razorpayOrder = await razorpay.orders.create(options);
 
     res.status(200).json({
       success: true,
@@ -105,6 +106,9 @@ export const createRazorpayOrder = async (req, res) => {
       message: 'Razorpay order created successfully'
     });
   } catch (error) {
+    if (error?.code === "RAZORPAY_NOT_CONFIGURED") {
+      return res.status(503).json({ success: false, message: error.message });
+    }
     logError("RAZORPAY_ORDER_CREATE_ERROR", { message: error?.message || String(error) });
     res.status(500).json({
       success: false,
@@ -304,6 +308,9 @@ export const verifyRazorpayPayment = async (req, res) => {
       }
     });
   } catch (error) {
+    if (error?.code === "RAZORPAY_NOT_CONFIGURED") {
+      return res.status(503).json({ success: false, message: error.message });
+    }
     logError("PAYMENT_VERIFICATION_ERROR", { message: error?.message || String(error) });
     res.status(500).json({
       success: false,

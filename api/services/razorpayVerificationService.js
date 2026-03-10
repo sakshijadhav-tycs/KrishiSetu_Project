@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import Order from "../models/OrderModel.js";
-import { razorpayInstance } from "../config/razorpay.js";
+import { requireRazorpayInstance } from "../config/razorpay.js";
 
 export const verifyRazorpaySignature = ({
   razorpay_order_id,
@@ -16,7 +16,8 @@ export const verifyRazorpaySignature = ({
 };
 
 export const fetchRazorpayPayment = async (razorpay_payment_id) => {
-  return razorpayInstance.payments.fetch(razorpay_payment_id);
+  const razorpay = requireRazorpayInstance();
+  return razorpay.payments.fetch(razorpay_payment_id);
 };
 
 export const findOrderByRazorpayPaymentId = async (razorpay_payment_id) => {

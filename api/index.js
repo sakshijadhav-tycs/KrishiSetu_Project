@@ -3,10 +3,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import http from "http";
-import Razorpay from "razorpay";
 import cron from "node-cron";
 import connectDB from "./config/db.js";
 import { initializeSocket } from "./utils/socketHandler.js";
+import { isRazorpayConfigured, requireRazorpayInstance } from "./config/razorpay.js";
 
 // Models Import
 import Order from "./models/OrderModel.js";
@@ -65,12 +65,6 @@ initializeEmailTransport();
 
 const app = express();
 
-// --- RAZORPAY INSTANCE ---
-export const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
-
 // 1. CORS Configuration
 app.use(cors({
   origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -104,6 +98,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // --- 4. RAZORPAY PAYMENT ROUTES ---
 
 app.get("/api/getkey", verifyToken, (req, res) => {
+  if (!isRazorpayConfigured()) {
+    return res.status(503).json({
+      success: false,
+      message: "Razorpay is not configured on the server",
+    });
+  }
   res.status(200).json({
     success: true,
     message: "Razorpay key loaded",
@@ -124,13 +124,17 @@ app.post(
     if (req.user?.role !== "consumer" && req.user?.role !== "user") {
       return res.status(403).json({ success: false, message: "Only consumers can create payment orders" });
     }
+    const razorpay = requireRazorpayInstance();
     const options = {
       amount: Number(req.body.amount * 100),
       currency: "INR",
     };
-    const order = await razorpayInstance.orders.create(options);
+    const order = await razorpay.orders.create(options);
     res.status(200).json({ success: true, order });
   } catch (error) {
+    if (error?.code === "RAZORPAY_NOT_CONFIGURED") {
+      return res.status(503).json({ success: false, message: error.message });
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 });

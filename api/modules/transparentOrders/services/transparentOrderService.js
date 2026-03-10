@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
-import { razorpayInstance } from "../../../config/razorpay.js";
+import { requireRazorpayInstance } from "../../../config/razorpay.js";
 import MainOrder from "../../../models/MainOrderModel.js";
 import User from "../../../models/UserModel.js";
 import OrderItem from "../../../models/OrderItemModel.js";
@@ -546,7 +546,7 @@ export const createTransparentCheckoutOrder = async ({
     expiresAt,
   });
 
-  const razorpayOrder = await razorpayInstance.orders.create({
+  const razorpayOrder = await requireRazorpayInstance().orders.create({
     amount: Math.round(pricing.totalAmount * 100),
     currency: "INR",
     receipt: `ts_${intent._id.toString().slice(-10)}`,
@@ -581,7 +581,7 @@ export const createTransparentCheckoutOrder = async ({
     expiresAt,
   });
 
-  const razorpayOrder = await razorpayInstance.orders.create({
+  const razorpayOrder = await requireRazorpayInstance().orders.create({
     amount: Math.round(pricing.totalAmount * 100),
     currency: "INR",
     receipt: `ts_${intent._id.toString().slice(-10)}`,
@@ -622,7 +622,7 @@ export const verifyTransparentPaymentAndCreateOrders = async ({
     throw new Error("Invalid Razorpay signature");
   }
 
-  const payment = await razorpayInstance.payments.fetch(razorpay_payment_id);
+  const payment = await requireRazorpayInstance().payments.fetch(razorpay_payment_id);
   const resolvedIntentId = intentId || payment?.notes?.intentId;
   if (!resolvedIntentId) {
     throw new Error("Checkout intent missing in payment notes");

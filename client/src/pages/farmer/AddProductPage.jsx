@@ -155,7 +155,8 @@ useEffect(() => {
     }
   };
 
-  if (loading || categoriesLoading) return <Loader />;
+  //if (loading || categoriesLoading) return <Loader />;
+  if (categoriesLoading) return <Loader />;
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-50 min-h-screen">

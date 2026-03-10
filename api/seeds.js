@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+﻿import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { fileURLToPath } from "url";
 import Category from "./models/CategoryModel.js";
 
-dotenv.config();
+dotenv.config({ path: fileURLToPath(new URL("./.env", import.meta.url)) });
 
 const categories = [
   { name: "Vegetables", description: "Fresh farm vegetables" },
@@ -12,11 +13,16 @@ const categories = [
 
 const seedDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || "mongodb+srv://SakshiJadhav:sakshi%4007@cluster0.h4afbhb.mongodb.net/krishisetu_db?appName=Cluster0");
-    await Category.deleteMany(); // Purana empty data saaf karein
+    const mongoUri = process.env.MONGO_URI;
+    if (!mongoUri) {
+      throw new Error("MONGO_URI is missing. Configure it in KrishiSetu/api/.env.");
+    }
+
+    await mongoose.connect(mongoUri);
+    await Category.deleteMany();
     await Category.insertMany(categories);
-    console.log("Categories Seeded! ✅");
-    process.exit();
+    console.log("Categories seeded!");
+    process.exit(0);
   } catch (err) {
     console.error(err);
     process.exit(1);

@@ -65,9 +65,13 @@ initializeEmailTransport();
 
 const app = express();
 
-// 1. CORS Configuration
+// --- 1. UPDATED CORS CONFIGURATION ---
 app.use(cors({
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  origin: [
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173", 
+    "https://krishisetu-project.vercel.app" // Your Vercel Link Added Here
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -152,6 +156,7 @@ app.post(
     }
 
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const frontendBaseUrl = process.env.FRONTEND_URL || "https://krishisetu-project.vercel.app";
 
     // 1. Verify Signature
     const isAuthentic = verifyRazorpaySignature({
@@ -165,14 +170,13 @@ app.post(
 
       if (existingOrder) {
         return res.redirect(
-          `${process.env.FRONTEND_URL || "http://localhost:5173"}/paymentsuccess?reference=${razorpay_payment_id}`
+          `${frontendBaseUrl}/paymentsuccess?reference=${razorpay_payment_id}`
         );
       }
 
-      // 2. Razorpay API se 'notes' fetch karein (Safety check ke sath)
+      // 2. Razorpay API fetch
       const paymentInfo = await fetchRazorpayPayment(razorpay_payment_id);
 
-      // Notes validation (undefined error fix)
       if (!paymentInfo.notes || !paymentInfo.notes.items || !paymentInfo.notes.addressData) {
         return res.status(400).json({
           success: false,
@@ -182,14 +186,14 @@ app.post(
 
       const { consumerId, farmerId, items, amount, addressData } = paymentInfo.notes;
 
-      // 3. MongoDB mein Order create karein taaki History mein dikhe
+      // 3. MongoDB Order creation
       await Order.create({
         consumer: consumerId,
         farmer: farmerId,
         items: JSON.parse(items),
         totalAmount: Number(amount),
         orderType: "delivery",
-        status: "accepted", // History mein Accepted dikhane ke liye
+        status: "accepted", 
         deliveryDetails: {
           address: JSON.parse(addressData)
         },
@@ -202,8 +206,8 @@ app.post(
         razorpay_signature: razorpay_signature
       });
 
-      // 4. Success Page redirect
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/paymentsuccess?reference=${razorpay_payment_id}`);
+      // 4. Redirect to Vercel URL
+      res.redirect(`${frontendBaseUrl}/paymentsuccess?reference=${razorpay_payment_id}`);
     } else {
       res.status(400).json({ success: false, message: "Invalid Signature" });
     }
@@ -239,10 +243,9 @@ app.get("/", (req, res) => {
 });
 
 app.use(notFoundHandler);
-
 app.use(errorHandler);
 
-// --- 6. CRON JOB: Auto-create orders for due subscriptions ---
+// --- 6. CRON JOBS ---
 const addDays = (date, days) => {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
@@ -263,10 +266,7 @@ cron.schedule("0 2 * * *", async () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const settings = await Settings.findOne().lean();
-        const commissionPercent =
-          Number(settings?.defaultCommissionPercent) > 0
-            ? Number(settings.defaultCommissionPercent)
-            : 10;
+        const commissionPercent = Number(settings?.defaultCommissionPercent) > 0 ? Number(settings.defaultCommissionPercent) : 10;
         const gstPercent = 5;
         const deliveryCharge = 50;
 
@@ -285,17 +285,11 @@ cron.schedule("0 2 * * *", async () => {
           if (!product) continue;
 
           const qty = Number(sub.quantity || 1);
-          const availableStock =
-            product.countInStock || product.quantityAvailable || 0;
+          const availableStock = product.countInStock || product.quantityAvailable || 0;
           if (availableStock < qty) continue;
 
-          // Reduce stock safely
-          if (product.countInStock !== undefined) {
-            product.countInStock -= qty;
-          }
-          if (product.quantityAvailable !== undefined) {
-            product.quantityAvailable -= qty;
-          }
+          if (product.countInStock !== undefined) product.countInStock -= qty;
+          if (product.quantityAvailable !== undefined) product.quantityAvailable -= qty;
           await product.save();
 
           const activeDeal = await getAppliedDealForProduct(product, today);
@@ -353,8 +347,7 @@ cron.schedule("0 2 * * *", async () => {
           });
 
           sub.lastOrderDate = new Date();
-          const intervalDays =
-            sub.frequency === "daily" ? 1 : sub.frequency === "weekly" ? 7 : 30;
+          const intervalDays = sub.frequency === "daily" ? 1 : sub.frequency === "weekly" ? 7 : 30;
           sub.nextDeliveryDate = addDays(sub.nextDeliveryDate || today, intervalDays);
           sub.nextOrderDate = sub.nextDeliveryDate;
           if (sub.endDate && new Date(sub.nextDeliveryDate) > new Date(sub.endDate)) {
@@ -363,10 +356,7 @@ cron.schedule("0 2 * * *", async () => {
           }
           await sub.save();
         }
-
-        return {
-          dueSubscriptions: dueSubs.length,
-        };
+        return { dueSubscriptions: dueSubs.length };
       },
       metadataFromResult: (result) => result || null,
     });
@@ -375,7 +365,6 @@ cron.schedule("0 2 * * *", async () => {
   }
 });
 
-// Transparent settlement sweep: runs daily for automatic eligible/transfer updates.
 cron.schedule("30 2 * * *", async () => {
   try {
     const result = await runMonitoredCronJob({
@@ -383,37 +372,24 @@ cron.schedule("30 2 * * *", async () => {
       source: "cron:daily_0230",
       run: async () => {
         const transparent = await runSettlementSweep({ source: "cron:daily_0230" });
-        const regular = await runRegularSettlementSweep(new Date(), {
-          source: "cron:daily_0230",
-        });
+        const regular = await runRegularSettlementSweep(new Date(), { source: "cron:daily_0230" });
         return { transparent, regular };
       },
       metadataFromResult: (payload) => ({
-        transparent: payload?.transparent
-          ? {
+        transparent: payload?.transparent ? {
               scanned: payload.transparent.scanned || 0,
               promoted: payload.transparent.promoted || 0,
               transferred: payload.transparent.transferred || 0,
               overdueEligibleCount: payload.transparent.overdueEligibleCount || 0,
-            }
-          : null,
-        regular: payload?.regular
-          ? {
+            } : null,
+        regular: payload?.regular ? {
               scanned: payload.regular.scanned || 0,
               promoted: payload.regular.promoted || 0,
               transferred: payload.regular.transferred || 0,
               overdueEligibleCount: payload.regular.overdueEligibleCount || 0,
-            }
-          : null,
+            } : null,
       }),
     });
-
-    logInfo(
-      `[transparent-settlement-sweep] scanned=${result.transparent.scanned} updated=${result.transparent.updated}`
-    );
-    logInfo(
-      `[regular-payout-sweep] scanned=${result.regular.scanned} eligible=${result.regular.promoted} transferred=${result.regular.transferred}`
-    );
   } catch (err) {
     logError("SETTLEMENT_DAILY_SWEEP_CRON_ERROR", { message: err.message });
   }
@@ -423,24 +399,13 @@ const BASE_PORT = Number(process.env.PORT) || 5000;
 let currentPort = BASE_PORT;
 const httpServer = http.createServer(app);
 const socketIO = initializeSocket(httpServer);
-
-// Export socketIO for use in controllers
 export { socketIO };
 
 const startServer = (port) => {
   currentPort = port;
   httpServer.listen(currentPort, () => {
     logInfo(`Server running on port ${currentPort}`);
-    logInfo("Socket.IO ready for real-time connections");
   });
-};
-
-const logClockInfo = () => {
-  const now = new Date();
-  const offsetMinutes = now.getTimezoneOffset();
-  logInfo(
-    `[clock] nowUtc=${now.toISOString()} timezoneOffsetMinutes=${offsetMinutes}`
-  );
 };
 
 const runSettlementCatchup = async (source = "unknown") => {
@@ -450,13 +415,6 @@ const runSettlementCatchup = async (source = "unknown") => {
       runSettlementSweep({ source: `catchup:${source}` }),
       runRegularSettlementSweep(now, { source: `catchup:${source}` }),
     ]);
-
-    logInfo(
-      `[settlement-catchup:${source}] transparent scanned=${transparent.scanned || 0} updated=${transparent.updated || 0} transferred=${transparent.transferred || 0} overdueEligibleCount=${transparent.overdueEligibleCount || 0}`
-    );
-    logInfo(
-      `[settlement-catchup:${source}] regular scanned=${regular.scanned || 0} eligible=${regular.promoted || 0} transferred=${regular.transferred || 0} overdueEligibleCount=${regular.overdueEligibleCount || 0}`
-    );
   } catch (err) {
     logError("SETTLEMENT_CATCHUP_ERROR", { source, message: err.message });
   }
@@ -465,7 +423,6 @@ const runSettlementCatchup = async (source = "unknown") => {
 httpServer.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
     const nextPort = currentPort + 1;
-    logWarn(`Port ${currentPort} is in use. Retrying on port ${nextPort}...`);
     setTimeout(() => startServer(nextPort), 300);
     return;
   }
@@ -474,33 +431,10 @@ httpServer.on("error", (err) => {
 
 startServer(BASE_PORT);
 
-process.on("unhandledRejection", (err) => {
-  logError("UNHANDLED_REJECTION", { message: err.message });
-  httpServer.close(() => process.exit(1));
-});
-
-logClockInfo();
 setTimeout(() => {
-  runMonitoredCronJob({
-    jobName: "settlement_catchup_startup",
-    source: "startup",
-    run: async () => runSettlementCatchup("startup"),
-    metadataFromResult: () => null,
-  }).catch((err) => {
-    logError("SETTLEMENT_CATCHUP_STARTUP_ERROR", { message: err.message });
-  });
+  runSettlementCatchup("startup");
 }, 5000);
 
-// Self-healing catch-up sweep to reduce missed-cron impact during restarts/downtime.
 cron.schedule("*/10 * * * *", async () => {
-  try {
-    await runMonitoredCronJob({
-      jobName: "settlement_catchup_10min",
-      source: "cron:10min",
-      run: async () => runSettlementCatchup("10min"),
-      metadataFromResult: () => null,
-    });
-  } catch (err) {
-    logError("SETTLEMENT_CATCHUP_10MIN_CRON_ERROR", { message: err.message });
-  }
+  runSettlementCatchup("10min");
 });

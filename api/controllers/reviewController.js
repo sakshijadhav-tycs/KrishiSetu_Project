@@ -7,7 +7,7 @@ export const addReview = async (req, res) => {
   try {
     const { farmerId, rating, comment } = req.body;
 
-    // Check karein ki user authenticated hai (Middleware se)
+    // Check karein ki user authenticated hai
     if (!req.user) {
         return res.status(401).json({ success: false, message: "Not authorized" });
     }
@@ -51,6 +51,7 @@ export const addReview = async (req, res) => {
       customerName: req.user.name,
       rating: Number(rating),
       comment,
+      isHidden: false // Explicitly setting it to false for new reviews
     };
 
     const existingReview = await Review.findOne({
@@ -103,9 +104,11 @@ export const getFarmerReviews = async (req, res) => {
     const hasPagination = Number.isFinite(requestedLimit) && requestedLimit > 0;
     const limit = hasPagination ? Math.min(requestedLimit, 50) : null;
     const skip = hasPagination ? (page - 1) * limit : 0;
+
+    // FIX: $ne: true use kiya hai taaki agar isHidden field missing (undefined) ho toh bhi review dikhe
     const filter = {
       farmerId: new mongoose.Types.ObjectId(farmerId),
-      isHidden: false,
+      isHidden: { $ne: true }, 
     };
 
     const [reviews, totalReviews] = await Promise.all([
@@ -145,7 +148,8 @@ export const getFarmerRatingSummary = async (req, res) => {
       {
         $match: {
           farmerId: new mongoose.Types.ObjectId(farmerId),
-          isHidden: { $ne: true },
+          // FIX: Same logic here
+          isHidden: { $ne: true }, 
         },
       },
       {

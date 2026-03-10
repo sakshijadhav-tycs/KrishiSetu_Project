@@ -33,34 +33,35 @@ const AddProductPage = () => {
   const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
   const [errors, setErrors] = useState({});
 
-  // AddProductPage.jsx mein pehle useEffect ko aise update karein:
-useEffect(() => {
-  // Purane errors clear karein taaki loading state reset ho sake
-  dispatch(clearProductError());
-  dispatch(resetProductSuccess());
+  // Fetch Categories & Reset Redux State
+  useEffect(() => {
+    dispatch(clearProductError());
+    dispatch(resetProductSuccess());
 
-  const fetchCategories = async () => {
-    try {
-      setCategoriesLoading(true);
-      const { data } = await axios.get(`${API_URL}/categories`);
-      if (data.success) {
-        setCategories(data.data);
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const { data } = await axios.get(`${API_URL}/categories`);
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        toast.error("Could not load categories.");
+      } finally {
+        setCategoriesLoading(false);
       }
-    } catch (err) {
-      console.error("Error fetching categories:", err);
-      toast.error("Could not load categories.");
-    } finally {
-      setCategoriesLoading(false);
-    }
-  };
-  fetchCategories();
-}, [dispatch]); // dispatch add karein dependency mein
+    };
+    fetchCategories();
+  }, [dispatch]);
 
+  // Handle Success/Error from Redux
   useEffect(() => {
     if (success) {
       toast.success("Product listed successfully!");
       dispatch(resetProductSuccess());
-      navigate("/farmer/products");
+      // Thoda delay taaki toast dikh jaye
+      setTimeout(() => navigate("/farmer/products"), 1500);
     }
     if (error) {
       toast.error(error);
@@ -79,6 +80,7 @@ useEffect(() => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
+    // 5MB limit check
     const validFiles = files.filter(file => file.size <= 5 * 1024 * 1024);
     
     if (validFiles.length < files.length) {
@@ -110,8 +112,8 @@ useEffect(() => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Product name is required";
     if (!formData.category) newErrors.category = "Please select a category";
-    if (!formData.price || formData.price <= 0) newErrors.price = "Valid price is required";
-    if (!formData.quantityAvailable || formData.quantityAvailable < 0) {
+    if (!formData.price || Number(formData.price) <= 0) newErrors.price = "Valid price is required";
+    if (!formData.quantityAvailable || Number(formData.quantityAvailable) < 0) {
         newErrors.quantityAvailable = "Available quantity is required";
     }
     if (formData.images.length === 0) {
@@ -122,40 +124,34 @@ useEffect(() => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // UPDATED SUBMIT LOGIC
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Explicit check for images to prevent backend validation triggers
-    if (formData.images.length === 0) {
-      toast.error("Please upload at least one image before launching.");
-      return;
-    }
-
     if (validateForm()) {
       const data = new FormData();
       
-      // Mapping frontend fields to backend expected fields
-      data.append("name", formData.name);
-      data.append("description", formData.description);
+      // Append fields correctly for Multer/Backend
+      data.append("name", formData.name.trim());
+      data.append("description", formData.description.trim());
       data.append("category", formData.category);
-      data.append("price", Number(formData.price)); // Explicit conversion
+      data.append("price", Number(formData.price));
       data.append("unit", formData.unit);
       data.append("isOrganic", formData.isOrganic);
-      data.append("quantityAvailable", Number(formData.quantityAvailable)); // Explicit conversion
+      data.append("quantityAvailable", Number(formData.quantityAvailable));
 
-      // Ensure images are appended as an array of files
       formData.images.forEach((file) => {
         data.append("images", file); 
       });
 
+      // Debugging log (check console if it's stuck)
+      console.log("Submitting FormData...");
       dispatch(createProduct(data));
     } else {
-      toast.error("Please fill all required fields correctly.");
+      toast.error("Please fill all required fields.");
     }
   };
 
-  //if (loading || categoriesLoading) return <Loader />;
+  // Only show full-screen loader for initial categories fetch
   if (categoriesLoading) return <Loader />;
 
   return (

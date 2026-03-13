@@ -26,7 +26,6 @@ const ensureFarmerCanManageProducts = async (farmerId) => {
 export const createProduct = async (req, res) => {
   try {
     const farmerId = req.user._id;
-
     // 1. Account Status Check
     const accountState = await ensureFarmerCanManageProducts(farmerId);
     if (accountState.blocked) {
@@ -36,14 +35,12 @@ export const createProduct = async (req, res) => {
         accountState,
       });
     }
-
     // 2. Images Check (Cloudinary handles the upload before this)
     if (!req.files || req.files.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "At least one image is required" });
     }
-
     // 3. Prepare Product Data
     const productData = {
       ...req.body,
@@ -51,10 +48,8 @@ export const createProduct = async (req, res) => {
       // Cloudinary use kar rahe hain toh path direct URL hota hai
       images: req.files.map((file) => file.path), 
     };
-
     // 4. Save to Database
     const product = await Product.create(productData);
-
     // 5. Response (Send this before any heavy background tasks to avoid timeouts)
     res.status(201).json({ 
       success: true, 
@@ -71,7 +66,6 @@ export const createProduct = async (req, res) => {
     });
   }
 };
-
 // @desc    Get all products
 export const getAllProducts = async (req, res) => {
   try {
@@ -200,7 +194,6 @@ export const getAllProducts = async (req, res) => {
       .json({ success: false, message: "Server error", error: error.message });
   }
 };
-
 // @desc    Get single product details
 export const getProduct = async (req, res) => {
   try {

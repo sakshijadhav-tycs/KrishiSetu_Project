@@ -58,9 +58,16 @@ export const createProduct = createAsyncThunk(
     try {
       const config = getAuthConfig(getState);
       // FormData bhejte waqt Content-Type header manually set nahi karte
-      const { data } = await axios.post(`${API_URL}/products`, productData, config);
+      // 60s timeout so UI doesn't hang forever if server/Cloudinary is slow
+      const { data } = await axios.post(`${API_URL}/products`, productData, {
+        ...config,
+        timeout: 60000,
+      });
       return data;
     } catch (error) {
+      if (error.code === "ECONNABORTED") {
+        return rejectWithValue("Request timed out. Please check your connection and try again.");
+      }
       return rejectWithValue(error.response?.data?.message || "Failed to create product");
     }
   }
@@ -72,9 +79,15 @@ export const updateProduct = createAsyncThunk(
   async ({ id, productData }, { rejectWithValue, getState }) => {
     try {
       const config = getAuthConfig(getState);
-      const { data } = await axios.put(`${API_URL}/products/${id}`, productData, config);
+      const { data } = await axios.put(`${API_URL}/products/${id}`, productData, {
+        ...config,
+        timeout: 60000,
+      });
       return data;
     } catch (error) {
+      if (error.code === "ECONNABORTED") {
+        return rejectWithValue("Request timed out. Please check your connection and try again.");
+      }
       return rejectWithValue(error.response?.data?.message || "Failed to update product");
     }
   }

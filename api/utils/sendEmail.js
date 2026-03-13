@@ -52,10 +52,16 @@ const getTransporter = () => {
 export const initializeEmailTransport = async () => {
   try {
     const transporter = getTransporter();
-    await transporter.verify();
+    const VERIFY_TIMEOUT = 5000; // 5 seconds max
+    await Promise.race([
+      transporter.verify(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("SMTP verify timed out after 5s")), VERIFY_TIMEOUT)
+      ),
+    ]);
     console.log("EMAIL_TRANSPORT_READY");
   } catch (error) {
-    console.error("EMAIL_TRANSPORT_ERROR:", error?.message || error);
+    console.warn("EMAIL_TRANSPORT_WARNING:", error?.message || error, "— server will continue without verified email transport");
   }
 };
 

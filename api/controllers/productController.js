@@ -26,6 +26,8 @@ const ensureFarmerCanManageProducts = async (farmerId) => {
 export const createProduct = async (req, res) => {
   try {
     const farmerId = req.user._id;
+
+    // 1. Account Status Check
     const accountState = await ensureFarmerCanManageProducts(farmerId);
     if (accountState.blocked) {
       return res.status(403).json({
@@ -35,26 +37,38 @@ export const createProduct = async (req, res) => {
       });
     }
 
+    // 2. Images Check (Cloudinary handles the upload before this)
     if (!req.files || req.files.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "At least one image is required" });
     }
 
+    // 3. Prepare Product Data
     const productData = {
       ...req.body,
       farmer: farmerId,
-      images: req.files.map((file) => file.path.replace(/\\/g, "/")),
+      // Cloudinary use kar rahe hain toh path direct URL hota hai
+      images: req.files.map((file) => file.path), 
     };
 
+    // 4. Save to Database
     const product = await Product.create(productData);
-    res
-      .status(201)
-      .json({ success: true, message: "Product created", data: product });
+
+    // 5. Response (Send this before any heavy background tasks to avoid timeouts)
+    res.status(201).json({ 
+      success: true, 
+      message: "Product created successfully", 
+      data: product 
+    });
+
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+    console.error("Create Product Error:", error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: "Server error while creating product", 
+      error: error.message 
+    });
   }
 };
 
@@ -246,7 +260,7 @@ export const updateProduct = async (req, res) => {
 
     const updateData = { ...req.body };
     if (req.files && req.files.length > 0) {
-      updateData.images = req.files.map((file) => file.path.replace(/\\/g, "/"));
+      updateData.images = req.files.map((file) => file.path);
     }
 
     product = await Product.findByIdAndUpdate(id, updateData, {
